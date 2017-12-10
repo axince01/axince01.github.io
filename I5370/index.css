@@ -1,0 +1,134 @@
+/* ............................................................................................. */
+/* .................. GI1.12 - Computer Graphics HW (CSS) [Check OK - 20171115] ................ */
+/* ............................................................................................. */
+/* ........................... © 2017 J.X.Yang. All Rights Reserved. ........................... */
+/* ............................................................................................. */
+
+@import url(https://fonts.googleapis.com/earlyaccess/notosanstc.css);
+/* Google Fonts : Noto Sans TC（Chinese Traditional） */
+
+body {
+    margin: 0;
+}
+
+.title {
+	background: #E0E0E0;
+	padding: 12px 0px;
+	letter-spacing: 1px;
+}
+
+.title h1 {
+  font-size: 24px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 300;
+  color: #6C6C6C;
+  text-align: center;
+}
+
+.title h2 {
+  font-size: 18px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 300;
+  color: #6C6C6C;
+  text-align: center;
+}
+
+.hw {
+	margin: 30px auto;
+	width: 800px;
+}
+
+.hw span {
+	display: block;
+	float: left;
+	width: 150px;
+	height: 150px;
+	padding: 9px 9px;
+	margin: 0px 15px 65px 15px; /* 上, 右, 下, 左 */
+	border: #BEBEBE 1px solid;
+	border-radius: 5px;
+	box-shadow: 3px 3px 3px #BEBEBE;
+}
+
+.hw span:hover { 
+    box-shadow: none;
+}
+
+.img {
+	display: inline-block;
+	width: 150px;
+	height: 150px;
+}
+
+.hw01 .img {
+	background: url(./hw01.png);
+	-moz-background-size: contain;
+    -webkit-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
+}
+
+.hw02 .img {
+	background: url(./unknown.png);
+	-moz-background-size: contain;
+    -webkit-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
+}
+
+.hw03 .img {
+	background: url(./hw03.gif);
+	-moz-background-size: contain;
+    -webkit-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
+}
+
+.hw04 .img {
+	background: url(./unknown.png);
+	-moz-background-size: contain;
+    -webkit-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
+}
+
+.hw05 .img {
+	background: url(./unknown.png);
+	-moz-background-size: contain;
+    -webkit-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
+}
+
+.hw06 .img {
+	background: url(./unknown.png);
+	-moz-background-size: contain;
+    -webkit-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
+}
+
+.text {
+	display: block;
+	font-size: 18px;
+	font-family: 'Noto Sans TC', sans-serif;
+  	font-weight: 300;
+  	color: #6C6C6C;
+	text-align: center;
+}
+
+.text:hover { 
+    text-decoration: none;
+}
+
+.footer {
+	position: absolute;
+    bottom: 0;
+    text-align: center;
+    font-size: 14px;
+  	font-family: 'Noto Sans TC', sans-serif;
+  	font-weight: 300;
+  	letter-spacing: 1px;
+	background: #E0E0E0;
+	width: 100%;
+}

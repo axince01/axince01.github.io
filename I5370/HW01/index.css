@@ -1,0 +1,13 @@
+#info {
+  position: absolute;
+  top: 2%;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: #FFFFFF
+}
+
+body {
+  overflow: hidden;
+  margin: 0;
+}

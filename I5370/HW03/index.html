@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"/>
+    <style type="text/css">@import"index.css";</style>
+    <title>GI112 • HW03</title>
+    <link rel="Shortcut Icon" type="image/x-icon" href="../icon.ico"/>
+</head>
+
+<body> 
+    
+    <div class="txt">
+        <h1>W : 前進&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S : 後退</h1>
+        <h1>G : 砲塔左旋&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;J : 砲塔右旋</h1>
+        <h1>Y : 砲管往上&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;H : 砲管往下</h1>
+        <h1>Space : 發射砲彈</h1>
+    </div>
+        
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<script src="https://jyunming-chen.github.io/tutsplus/js/KeyboardState.js"></script>
+
+<script>
+    // renderer : 渲染器，負責計算在 camera 的角度下，browser 中 scene 的樣子。
+    // scene : 場景，我們所看到的畫面。
+    // camera : 定義了使用者能在渲染好的 scene 看到什麼，也就是使用者的視角。
+    var renderer, camera, controls, scene, axes;
+    
+    //var stats;
+    var theta1 = -0.2;
+    var theta2 = 0.2;
+
+    ///////////////
+    var keyboard = new KeyboardState();
+
+    stopped = true;
+    ///////////////
+
+    init();  // 創建渲染器
+
+    ///////////
+    //start();
+    ///////////
+
+    animate();
+
+    // 建立組成 Tank 的物件，儲存到 parts[] 陣列中。
+    function buildParts() {
+        var parts = [];
+        
+        //var mat = new THREE.MeshNormalMaterial()
+    	var mat = new THREE.MeshLambertMaterial({color:0x798475});
+
+        // 輪子 (共 8 輪)
+        var wheel = new THREE.Object3D();
+        var wheelMesh_1_1 = new THREE.Mesh (new THREE.CylinderGeometry (4.4, 4.4, 4, 30),mat);  // 輪子右一
+        var wheelMesh_1_2 = new THREE.Mesh (new THREE.CylinderGeometry (4.4, 4.4, 4, 30),mat);  // 輪子左一
+        var axleMesh_1 = new THREE.Mesh (new THREE.CylinderGeometry (1, 1, 12, 30),mat);  // 輪軸一
+
+        var wheelMesh_2_1 = new THREE.Mesh (new THREE.CylinderGeometry (4.4, 4.4, 4, 30),mat);  // 輪子右二
+        var wheelMesh_2_2 = new THREE.Mesh (new THREE.CylinderGeometry (4.4, 4.4, 4, 30),mat);  // 輪子左二
+        var axleMesh_2 = new THREE.Mesh (new THREE.CylinderGeometry (1, 1, 12, 30),mat);  // 輪軸二
+
+        var wheelMesh_3_1 = new THREE.Mesh (new THREE.CylinderGeometry (4.4, 4.4, 4, 30),mat);  // 輪子右三
+        var wheelMesh_3_2 = new THREE.Mesh (new THREE.CylinderGeometry (4.4, 4.4, 4, 30),mat);  // 輪子左三
+        var axleMesh_3 = new THREE.Mesh (new THREE.CylinderGeometry (1, 1, 12, 30),mat);  // 輪軸三
+
+        var wheelMesh_4_1 = new THREE.Mesh (new THREE.CylinderGeometry (4.4, 4.4, 4, 30),mat);  // 輪子右四
+        var wheelMesh_4_2 = new THREE.Mesh (new THREE.CylinderGeometry (4.4, 4.4, 4, 30),mat);  // 輪子左四
+        var axleMesh_4 = new THREE.Mesh (new THREE.CylinderGeometry (1, 1, 12, 30),mat);  // 輪軸四
+
+        wheelMesh_1_1.rotation.x = Math.PI/2;
+        wheelMesh_1_2.rotation.x = Math.PI/2;
+        axleMesh_1.rotation.x = Math.PI/2;
+
+        wheelMesh_2_1.rotation.x = Math.PI/2;
+        wheelMesh_2_2.rotation.x = Math.PI/2;
+        axleMesh_2.rotation.x = Math.PI/2;
+
+        wheelMesh_3_1.rotation.x = Math.PI/2;
+        wheelMesh_3_2.rotation.x = Math.PI/2;
+        axleMesh_3.rotation.x = Math.PI/2;
+
+        wheelMesh_4_1.rotation.x = Math.PI/2;
+        wheelMesh_4_2.rotation.x = Math.PI/2;
+        axleMesh_4.rotation.x = Math.PI/2;
+
+        wheelMesh_1_1.position.set (23, 4, 8);  // 30 / 3 = 10 _ -7 _ 23
+        wheelMesh_1_2.position.set (23, 4, -8);
+        axleMesh_1.position.set (23, 4, 0);
+
+        wheelMesh_2_1.position.set (13, 4, 8);
+        wheelMesh_2_2.position.set (13, 4, -8);
+        axleMesh_2.position.set (13, 4, 0);
+
+        wheelMesh_3_1.position.set (3, 4, 8);
+        wheelMesh_3_2.position.set (3, 4, -8);
+        axleMesh_3.position.set (3, 4, 0);
+
+        wheelMesh_4_1.position.set (-7, 4, 8);
+        wheelMesh_4_2.position.set (-7, 4, -8);
+        axleMesh_4.position.set (-7, 4, 0);
+
+        wheel.add (wheelMesh_1_1);
+        wheel.add (wheelMesh_1_2);
+        wheel.add (axleMesh_1);
+        wheel.add (wheelMesh_2_1);
+        wheel.add (wheelMesh_2_2);
+        wheel.add (axleMesh_2);
+        wheel.add (wheelMesh_3_1);
+        wheel.add (wheelMesh_3_2);
+        wheel.add (axleMesh_3);
+        wheel.add (wheelMesh_4_1);
+        wheel.add (wheelMesh_4_2);
+        wheel.add (axleMesh_4);
+        parts.push (wheel);
+
+
+    	// 車體
+        var base = new THREE.Object3D();
+        var baseMesh_1 = new THREE.Mesh (new THREE.BoxGeometry(24, 3, 20), mat);
+        var baseMesh_2 = new THREE.Mesh (new THREE.BoxGeometry(38, 2, 20), mat);
+        var baseMesh_3 = new THREE.Mesh (new THREE.BoxGeometry(18, 3, 20), mat);
+        var baseMesh_4 = new THREE.Mesh (new THREE.CylinderGeometry(1.8, 1.8, 20, 3), mat);
+        var baseMesh_5 = new THREE.Mesh (new THREE.CylinderGeometry(2, 2, 20, 3), mat);
+        var baseMesh_6 = new THREE.Mesh (new THREE.BoxGeometry(1, 2, 20), mat);  // 後保險桿
+        var baseMesh_7 = new THREE.Mesh (new THREE.BoxGeometry(1, 2, 20), mat);  // 前保險桿
+        baseMesh_3.rotation.z = Math.PI / (-20);  // PI = 180 度
+        baseMesh_4.rotation.x = Math.PI / 2;
+        baseMesh_4.rotation.y = Math.PI / 1.8;
+        baseMesh_5.rotation.x = Math.PI / 2;
+        baseMesh_5.rotation.y = Math.PI / 1.4;
+        baseMesh_1.position.set (0, 12.5, 0);
+        baseMesh_2.position.set (7, 10, 0);
+        baseMesh_3.position.set (20.65, 11.112, 0);
+        baseMesh_4.position.set (-11, 8.7, 0);
+        baseMesh_5.position.set (28, 8, 0);
+        baseMesh_6.position.set (-12, 10, 0);
+        baseMesh_7.position.set (29.1, 9, 0);
+        base.add (baseMesh_1);
+        base.add (baseMesh_2);
+        base.add (baseMesh_3);
+        base.add (baseMesh_4);
+        base.add (baseMesh_5);
+        base.add (baseMesh_6);
+        base.add (baseMesh_7);
+    	parts.push (base);
+
+        // 砲塔
+        var turret = new THREE.Object3D();
+        var turret_1 = new THREE.Mesh (new THREE.CylinderGeometry(7, 8, 3, 8), mat);
+        var turret_2 = new THREE.Mesh (new THREE.CylinderGeometry(8, 7, 2, 8), mat);
+        turret_1.rotation.y = Math.PI/8;
+        turret_2.rotation.y = Math.PI/8;
+        turret_1.position.set (0, 2.5, 0);
+        turret_2.position.set (0, 0, 0);
+        turret.add(turret_1);
+        turret.add(turret_2);
+        parts.push (turret);
+
+        // 砲管轉軸。
+        var axis = new THREE.Object3D();
+        // 球體 : SphereGeometry(球體半徑, 水平線段數量, 垂直線段數量)。
+        var axisMesh = new THREE.Mesh(new THREE.SphereGeometry(1, 30, 30), mat);
+        axisMesh.position.set (6.5, 1, 0);
+        axis.add(axisMesh);
+        parts.push(axis);
+
+        // 砲管。
+        var cannon = new THREE.Object3D();
+        // 圓柱體 : CylinderGeometry(圓柱頂部半徑, 圓柱底部半徑, 圓柱體高度, 圓柱周圍分段面數量)。
+        var cannonMesh_1 = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 25, 30), mat);
+        var cannonMesh_2 = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 3, 30), mat);
+        cannonMesh_1.rotation.z = Math.PI / 2;
+        cannonMesh_2.rotation.z = Math.PI / 2;
+        cannonMesh_1.position.set (19, 1, 0);
+        cannonMesh_2.position.set (31, 1, 0);
+        cannon.add(cannonMesh_1);
+        cannon.add(cannonMesh_2); 
+    	parts.push(cannon);
+        
+        //---------------------------------------------------------------------------------------
+
+        return parts;
+    }
+
+    function buildTank(){
+
+        var tank = [];
+        
+        let parts = buildParts();
+        let tankObj = new THREE.Object3D();
+
+        // 輪子。
+        let wheel = parts[0]
+        tankObj.add (wheel);
+
+        // 車體。
+        let base = parts[1]
+        tankObj.add (base);
+ 
+        // 砲塔。
+        let turret = parts[2]
+        tankObj.add (turret);
+        turret.position.set (0, 15, 0); // 設定砲塔的座標
+        // console.log (theta1);
+        // turret.rotation.y = theta1;  // 砲塔旋轉
+
+      
+        // 砲管轉軸
+        let axis = parts[3]
+        turret.add(axis);
+      
+        // 砲管
+        let cannon = parts[4]
+        axis.add(cannon);
+        // axis.rotation.z = 0.2;  // 砲管上下移動 _ 0 - 0.2
+
+        tank.push(turret);
+        tank.push(axis);
+        tank.push(tankObj);
+      
+        return tank;
+    }
+
+    function buildSun(){
+        var mat = new THREE.MeshBasicMaterial({color:0xFFFFFF, wireframe: true});
+        let sunObj = new THREE.Object3D();
+        sun = new THREE.Mesh (new THREE.SphereGeometry( 100, 32, 32 ),mat);
+        sun.position.set (0, 1000, 0);
+        sunObj.add (sun);
+
+        return sunObj;
+    }
+
+    function init() {
+
+        renderer = new THREE.WebGLRenderer({
+            antialias: true
+        });
+
+        renderer.setSize(window.innerWidth, window.innerHeight - 196);
+        renderer.setClearColor(0x84C1FF);  // 設定背景顏色
+
+        document.body.appendChild(renderer.domElement);
+
+        camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
+        camera.position.z = 35;  // important
+        camera.position.y = 35;
+        camera.position.x = 35;
+
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+        scene = new THREE.Scene();  // 建立場景
+      
+        // 設定座標網格。
+        // THREE.GridHelper(面積, 長寬長度, xy軸顏色, 網格顏色);
+        let gridXZ = new THREE.GridHelper(2500, 50, 'red', 'white');
+        let planeObj = new THREE.Object3D();
+        let planeGeometry = new THREE.PlaneGeometry( 2500, 2500, 1, 1 );
+        var planeMaterial = new THREE.MeshBasicMaterial( { color: 0xAA9966 } );
+        var plane = new THREE.Mesh( planeGeometry, planeMaterial );
+        plane.rotation.x = Math.PI / -2;
+        plane.position.y = 0;
+        planeObj.add(plane); 
+        scene.add(gridXZ);
+        scene.add(planeObj);
+
+        let tank = buildTank();
+        let turret = tank[0];
+        let axis = tank[1];
+        let tankObj = tank[2];
+        let sunObj = buildSun();
+
+        //tankObj.position.y = 1;
+
+        scene.add (tankObj);
+        scene.add (sunObj);
+
+        // 告訴 renderer 我們需要陰影。
+        renderer.shadowMapEnabled = true;
+        
+        // 定義哪個物體接受陰影。
+        gridXZ.receiveShadow = true;
+        // 定義哪個物體投射陰影。
+        tankObj.castShadow = true;
+
+        // 添加光源
+        var sun = new THREE.SpotLight(0xffffff);
+        sun.position.set(0, 1000, 0);
+        sun.castShadow = true;
+        scene.add(sun);
+
+        // 按下鍵盤按鍵的動作。
+        document.onkeydown = function() {
+            var keycode = event.which || event.keyCode;
+        
+            // 按下 Up Arrow，Tank 向前。
+            if(keycode == 87) {
+                tankObj.position.set (tankObj.position.x + 1, 0, 0);
+            }
+
+            // 按下 Down Arrow，Tank 向後。
+            if(keycode == 83) {
+                tankObj.position.set (tankObj.position.x - 1, 0, 0);
+            }
+
+            if(keycode == 71) {  // G
+                turret.rotation.y = turret.rotation.y + 0.02;  // 砲塔左旋
+            }
+
+            if(keycode == 74) {  // J
+                turret.rotation.y = turret.rotation.y - 0.02;  // 砲塔右旋
+            }
+
+            if(keycode == 89 && axis.rotation.z <= 0.2) {  // Y
+                axis.rotation.z = axis.rotation.z + 0.02;  // 砲管上移
+            }
+
+            if(keycode == 72 && axis.rotation.z >= 0) {  // H
+                axis.rotation.z = axis.rotation.z - 0.02;  // 砲管下移
+            }
+        }
+
+        ///////////////////////////////
+        var geometry = new THREE.SphereGeometry(1, 30, 30);
+        ball = new THREE.Mesh(geometry, new THREE.MeshNormalMaterial());
+        scene.add(ball);
+
+        pos = new THREE.Vector3(30.5, 16, 0);  // 原點 (x, z, y)
+        vel = new THREE.Vector3();
+        force = new THREE.Vector3(0,-10,0);        
+        //////////////////////////////
+
+    }
+
+    function start () {
+        stopped = false;
+        //pos.set (200*Math.random()-100, 0, 200*Math.random()-100);
+        vel.set (0.9, 1, 0).normalize().multiplyScalar(35);
+    }
+
+    function update(dt) {
+        vel.add (force.clone().multiplyScalar(dt));
+        pos.add (vel.clone().multiplyScalar(dt));
+      
+        if (pos.y < 5) {
+            //pos.y = 5;
+            pos.set (30.5, 16, 0);
+            stopped = true;
+        }
+    }
+
+    function animate() {
+        controls.update();
+
+        //////////////////////////////
+        ball.position.copy (pos);
+        //ball.position.copy (pos)
+        if (stopped) {
+            keyboard.update();
+            if (keyboard.down("space")) start();
+        } 
+        else {
+            update (0.1);
+        }
+        /////////////////////////////
+        renderer.render (scene, camera);
+
+        requestAnimationFrame (animate);
+    }
+
+
+    // important to add this 
+    // in jsfiddle!
+    window.focus();
+
+</script>
+</body>
+</html>
