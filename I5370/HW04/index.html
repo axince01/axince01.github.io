@@ -90,8 +90,7 @@
           }, onProgress, onError);
         
         });
-
-        car = theObject;
+        
     }
 
     function unitize (object, targetSize) {  
@@ -187,8 +186,8 @@
         speed = 5.0;
         angle = 0.0;
   	
-        //car = buildVehicle();
-        //scene.add (car);
+        car = buildVehicle();
+        scene.add (car);
     }
 
     function update(dt) {
