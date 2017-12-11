@@ -73,7 +73,7 @@
             };
 
             var onError = function (xhr) { };
-            
+
         var mtlLoader = new THREE.MTLLoader();
         mtlLoader.setPath('./audioptimised02-obj/');
         mtlLoader.load('audioptimised02.mtl', function(materials) {
@@ -90,6 +90,8 @@
           }, onProgress, onError);
         
         });
+
+        car = theObject;
     }
 
     function unitize (object, targetSize) {  
@@ -185,8 +187,8 @@
         speed = 5.0;
         angle = 0.0;
   	
-        car = buildVehicle();
-        scene.add (car);
+        //car = buildVehicle();
+        //scene.add (car);
     }
 
     function update(dt) {
