@@ -63,6 +63,16 @@
     }
 
     function buildCar() {
+
+
+        var onProgress = function (xhr) {
+                if (xhr.lengthComputable) {
+                    var percentComplete = xhr.loaded / xhr.total * 100;
+                    console.log(Math.round(percentComplete, 2) + '% downloaded');
+                }
+            };
+
+
         var mtlLoader = new THREE.MTLLoader();
         mtlLoader.setPath('./audioptimised02-obj/');
         mtlLoader.load('audioptimised02.mtl', function(materials) {
