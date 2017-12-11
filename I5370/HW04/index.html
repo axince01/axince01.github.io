@@ -72,7 +72,8 @@
                 }
             };
 
-
+            var onError = function (xhr) { };
+            
         var mtlLoader = new THREE.MTLLoader();
         mtlLoader.setPath('./audioptimised02-obj/');
         mtlLoader.load('audioptimised02.mtl', function(materials) {
