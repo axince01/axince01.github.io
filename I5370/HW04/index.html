@@ -63,31 +63,44 @@
     }
 
     function buildCar() {
-        // THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
-
-        var cc = new THREE.Object3D();
-
-        var onProgress = function(xhr) {
-            if (xhr.lengthComputable) {
-                var percentComplete = xhr.loaded / xhr.total * 100;
-                console.log(Math.round(percentComplete, 2) + '% downloaded');
-            }
-        };
-        
-        var onError = function(xhr) {};
-        //THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
         var mtlLoader = new THREE.MTLLoader();
         mtlLoader.setPath('./audioptimised02-obj/');
         mtlLoader.load('audioptimised02.mtl', function(materials) {
-            materials.preload();
-            var objLoader = new THREE.OBJLoader();
-            objLoader.setMaterials(materials);
-            objLoader.setPath('./audioptimised02-obj/');
-            objLoader.load('audioptimised02.obj', function(object) {
-                object.position.y = 4;
-                scene.add(object);
-            }, onProgress, onError);
+          materials.preload();
+          var objLoader = new THREE.OBJLoader();
+          objLoader.setMaterials(materials);
+          objLoader.setPath('./audioptimised02-obj/');
+          objLoader.load('audioptimised02.obj', function(object) {
+        
+            var theObject =  unitize (object, 20);
+            scene.add (theObject);
+          
+            scene.add (new THREE.BoxHelper (theObject));
+          }, onProgress, onError);
+        
         });
+    }
+
+    function unitize (object, targetSize) {  
+  
+        // find bounding box of 'object'
+        var box3 = new THREE.Box3();
+        box3.setFromObject (object);
+        var size = new THREE.Vector3();
+        size.subVectors (box3.max, box3.min);
+        var center = new THREE.Vector3();
+        center.addVectors(box3.max, box3.min).multiplyScalar (0.5);
+        
+        // uniform scaling according to objSize
+        var objSize = Math.max (size.x, size.y, size.z); 
+        var scaleSet = targetSize/objSize;
+        
+        var theObject =  new THREE.Object3D();
+        theObject.add (object);
+        object.scale.set (scaleSet, scaleSet, scaleSet);
+        object.position.set (-center.x*scaleSet, -center.y*scaleSet + size.y/2*scaleSet, -center.z*scaleSet);
+        
+        return theObject;
     }
 
     function buildSun(){
