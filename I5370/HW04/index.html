@@ -43,6 +43,8 @@
     var pos = new THREE.Vector3();
     var speed, angle, vel;
 
+    var obsobj;
+
     (function() {
         Math.clamp = function(val,min,max){
         return Math.min(Math.max(val,min),max);
@@ -52,19 +54,30 @@
     animate();
 
     function buildVehicle() {
-        var car = new THREE.Object3D();
+        var vehicle = new THREE.Object3D();
         var mat = new THREE.MeshNormalMaterial();
-        var body = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 2, 20), mat);
-        car.add(body);
-        var pointer = new THREE.Mesh(new THREE.BoxGeometry(10, 2, 2), mat);
-        car.add(pointer);
-        pointer.position.x = 5;
+        var body = new THREE.Mesh(new THREE.BoxGeometry(10, 2, 5), mat);
+        vehicle.add(body);
+        var pointer = new THREE.Mesh(new THREE.BoxGeometry(5, 2, 4), mat);
+        vehicle.add(pointer);
+        pointer.position.y = 2;
+        var object = unitize(vehicle, 10);
+        object.position.set(0, 0, 0);
+        car = object;
         return car;
     }
 
+    function buildObs(){
+        var mat = new THREE.MeshBasicMaterial({color:0x000000});
+        let ObsObj = new THREE.Object3D();
+        obs = new THREE.Mesh (new THREE.BoxGeometry( 10, 100, 10 ),mat);
+        //obs.position.set (20, 50, 30);
+        ObsObj.add (obs);
+        var object = unitize(ObsObj, 40);
+        return object;
+    }
+
     function buildCar() {
-
-
         var onProgress = function (xhr) {
                 if (xhr.lengthComputable) {
                     var percentComplete = xhr.loaded / xhr.total * 100;
@@ -84,7 +97,12 @@
           objLoader.load('audioptimised02.obj', function(object) {
         
             var theObject =  unitize (object, 20);
+
+            //theObject.rotation.y = 10;
             scene.add (theObject);
+
+            car = theObject;
+            
           
             scene.add (new THREE.BoxHelper (theObject));
           }, onProgress, onError);
@@ -161,11 +179,16 @@
         scene.add(planeObj);
 
         let sunObj = buildSun();
+        obsobj =  buildObs();
+        obsobj.position.set(20, 0, 30);
         //let carObj = buildCar();
+
+
 
         buildCar();
 
         scene.add (sunObj);
+        scene.add (obsobj);
         //scene.add (cc);
 
         // 告訴 renderer 我們需要陰影。
@@ -182,26 +205,32 @@
         sun.castShadow = true;
         scene.add(sun);
 
-        speed = 5.0;
+        //speed = 5.0;
+        speed = 0.0;
         angle = 0.0;
   	
+      
         car = buildVehicle();
-        scene.add (car);
+        //scene.add (car);
     }
 
     function update(dt) {
 
         keyboard.update();
-        if ( keyboard.pressed("left") ) 
-            angle += 0.01;               
-        if ( keyboard.pressed("right") )
-            angle -= 0.01;               
+        if ( keyboard.pressed("left") && speed > 0 ) 
+            angle -= 0.01;  
+        else if ( keyboard.pressed("left") && speed < 0 ) 
+            angle += 0.01;              
+        if ( keyboard.pressed("right") && speed > 0)
+            angle += 0.01;   
+        else if ( keyboard.pressed("right") && speed < 0)
+            angle -= 0.01;                   
         if ( keyboard.pressed("up") )  
-            speed += 0.5;        
+            speed -= 0.5;        
         if ( keyboard.pressed("down") )  
-            speed -= 0.5;    
+            speed += 0.5;    
 
-        speed = Math.clamp (speed, 0.1, 20.0);		
+        //speed = Math.clamp (speed, 0.1, 20.0);		
         vel = new THREE.Vector3(speed,0,0);
             
         vel.applyAxisAngle (new THREE.Vector3(0,1,0), angle);
@@ -217,6 +246,15 @@
         // car update
         car.position.copy(pos);
         car.rotation.y = angle;
+
+        var distance = car.position.distanceTo(obsobj.position);
+
+        if (distance < 6) {
+            speed = 0;
+        }
+
+
+
 
         renderer.render (scene, camera);
 
