@@ -34,10 +34,12 @@
     var chair;
     var pos = new THREE.Vector3();
     var speed, angle, vel;
+
     (function() {
         Math.clamp = function(val,min,max){
         return Math.min(Math.max(val,min),max);
     }})();
+
     init();  // 創建渲染器
     animate();
 
@@ -45,7 +47,7 @@
         var parts = [];
         
         //var mat = new THREE.MeshNormalMaterial()
-    	var mat = new THREE.MeshLambertMaterial({color:0x408080});
+    	var mat = new THREE.MeshLambertMaterial({color:0xFFFCEC});
 
         // 桌面
         var desk = new THREE.Object3D();
@@ -91,7 +93,6 @@
 
         parts.push (legs);
 
-        deskMesh
         deskMesh.castShadow = true;
         deskMesh.receiveShadow = true;
         legsMesh_1.castShadow = true;
@@ -193,22 +194,29 @@
             
         var mtlLoader = new THREE.MTLLoader();
         mtlLoader.setPath('./chair/');
-        mtlLoader.load('WoodChair_01.mtl', function(materials) {
+        mtlLoader.load('WING.mtl', function(materials) {
             materials.preload();
             var objLoader = new THREE.OBJLoader();
             objLoader.setMaterials(materials);
             objLoader.setPath('./chair/');
-            objLoader.load('WoodChair_01.obj', function(object) {
+            objLoader.load('WING.obj', function(object) {
         
-                theObject =  unitize (object, 50);
+                theObject =  unitize (object, 40);
 
                 theObject.rotation.x = - (Math.PI / 2);
-                theObject.position.x = 30;
-                theObject.position.y = 25;
-                theObject.position.z = 13;
+                theObject.rotation.z = - (Math.PI / 2);
+                theObject.position.x = 20;
+                theObject.position.y = 20;
                 scene.add (theObject);
 
-                chair = theObject;
+                // .obj model casting shadows
+                object.traverse(
+                    function (child) {
+                        if (child instanceof THREE.Mesh) {                            
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                        }
+                    });
             }, onProgress, onError);
         });
 
@@ -241,12 +249,20 @@
                 theObject.rotation.y = 0.8;
                 scene.add (theObject);
 
-                //chair = theObject;
             }, onProgress, onError);
         });
 
+        // 檯燈光緣 (spotLight)
+        let lampLight = new THREE.SpotLight(0xFFF8D7, 1);
+        lampLight.position.set( -7.5, 66, 17 );
+        lampLight.castShadow = true;
+        lampLight.shadow.mapSize.width = 1024;
+        lampLight.shadow.mapSize.height = 1024;
+        scene.add(lampLight);
+
     }
 
+    // 吊燈 (來源: https://poly.google.com/view/e1pZXTJs3Qk) (作者: Caitlyn Meeks-Ferragallo) (CC-BY)
     function buildChandelier() {
         var onProgress = function (xhr) {
             if (xhr.lengthComputable) {
@@ -258,26 +274,29 @@
         var onError = function (xhr) { };
             
         var mtlLoader = new THREE.MTLLoader();
-        mtlLoader.setPath('./Chandelier/');
-        mtlLoader.load('Chandelier.mtl', function(materials) {
+        mtlLoader.setPath('./chandelier/');
+        mtlLoader.load('chandelier.mtl', function(materials) {
             materials.preload();
             var objLoader = new THREE.OBJLoader();
             objLoader.setMaterials(materials);
-            objLoader.setPath('./Chandelier/');
-            objLoader.load('Chandelier.obj', function(object) {
+            objLoader.setPath('./chandelier/');
+            objLoader.load('chandelier.obj', function(object) {
         
-                theObject =  unitize (object, 30);
+                theObject =  unitize (object, 40);
+                theObject.position.set(0, 120, 0);
 
-                theObject.position.x = -10;
-                theObject.position.y = 41;
-                theObject.position.z = 20;
-                theObject.rotation.y = 0.8;
                 scene.add (theObject);
 
-                //chair = theObject;
             }, onProgress, onError);
         });
 
+        // 吊燈光緣 (spotLight)
+        let chandelierLight = new THREE.SpotLight(0xFFF8D7, 1);
+        chandelierLight.position.set( 0, 120, 0 );
+        chandelierLight.castShadow = true;
+        chandelierLight.shadow.mapSize.width = 1024;
+        chandelierLight.shadow.mapSize.height = 1024;
+        scene.add(chandelierLight);
     }
 
     function unitize (object, targetSize) {  
@@ -364,12 +383,6 @@
         //ctrl.position.y = 10;
         //ctrl.position.z = 10;
 
-        let spotLight = new THREE.SpotLight(0xffffff)
-        spotLight.position.set( 0, 120, 0 );
-        spotLight.castShadow = true;
-
-        scene.add(spotLight);
-
         buildFloor();
         buildChair();
         buildChandelier();
@@ -384,36 +397,11 @@
         // 添加光源
         //scene.add(new THREE.AmbientLight(0x444444));  // 環境光
 
-        let light = new THREE.SpotLight(0xffffff);  // 點光源
-        light.position.set( -7.5, 66, 17 );
-        light.castShadow = true;  // 告訴平行光需要開啟陰影投射
-
-        //light.distance = 50; 
-        //light.angle = 0.6; 
-        //light.decay = 2;
-        //light.penumbra = 0.2;          
-        
-        //light.shadow.camera.near = 1;
-        //light.shadow.camera.far = 3;
-        //light.shadow.camera.visible = true;            
-        //light.shadow.mapSize.width = 1024;
-        //light.shadow.mapSize.height = 1024;                                    
-        //light.target = plane;
-        scene.add(light);
-
-        //scene.add (cc);
         // 告訴 renderer 我們需要陰影。
         renderer.shadowMap.enabled = true;
 
         //
         renderer.shadowMap.type = THREE.BasicShadowMap;
-
-        // 定義哪個物體投射陰影。
-        ctrl.castShadow = true;
-        //ctrl.receiveShadow = true;
-
-        // 定義哪個物體接受陰影。
-        desk.receiveShadow = true;
     }
     
     function update(dt) {
