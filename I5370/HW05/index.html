@@ -12,8 +12,6 @@
 <body> 
             
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script>
-<!--<script src="./three.js-master/examples/js/loaders/OBJLoader.js"></script>-->
-<!--<script src="./three.js-master/examples/js/loaders/MTLLoader.js"></script>-->
 <script src="https://rawgit.com/mrdoob/three.js/master/examples/js/loaders/MTLLoader.js"></script>
 <script src="https://rawgit.com/mrdoob/three.js/master/examples/js/loaders/OBJLoader.js"></script>
 
@@ -43,107 +41,250 @@
     init();  // 創建渲染器
     animate();
 
-    function buildDeskParts() {
-        var parts = [];
-        
-        //var mat = new THREE.MeshNormalMaterial()
-    	var mat = new THREE.MeshLambertMaterial({color:0xFFFCEC});
-
-        // 桌面
-        var desk = new THREE.Object3D();
-        var deskMesh = new THREE.Mesh (new THREE.BoxGeometry (40, 80, 2),mat);  // 桌面
-
-        deskMesh.rotation.x = Math.PI/2;
-        deskMesh.position.y = 40;
-
-        desk.add (deskMesh);
-        parts.push (desk);
-
-        // 桌腳 (共 4 支)
-        var legs = new THREE.Object3D();
-        var legsMesh_1 = new THREE.Mesh (new THREE.BoxGeometry (5, 5, 40),mat);  // 桌腳_1
-        var legsMesh_2 = new THREE.Mesh (new THREE.BoxGeometry (5, 5, 40),mat);  // 桌腳_2
-        var legsMesh_3 = new THREE.Mesh (new THREE.BoxGeometry (5, 5, 40),mat);  // 桌腳_3
-        var legsMesh_4 = new THREE.Mesh (new THREE.BoxGeometry (5, 5, 40),mat);  // 桌腳_4
-
-        legsMesh_1.rotation.x = Math.PI/2;
-        legsMesh_1.position.x = -10;
-        legsMesh_1.position.y = 20;
-        legsMesh_1.position.z = 20;
-
-        legsMesh_2.rotation.x = Math.PI/2;
-        legsMesh_2.position.x = -10;
-        legsMesh_2.position.y = 20;
-        legsMesh_2.position.z = -20;
-
-        legsMesh_3.rotation.x = Math.PI/2;
-        legsMesh_3.position.x = 10;
-        legsMesh_3.position.y = 20;
-        legsMesh_3.position.z = 20;
-
-        legsMesh_4.rotation.x = Math.PI/2;
-        legsMesh_4.position.x = 10;
-        legsMesh_4.position.y = 20;
-        legsMesh_4.position.z = -20;
-
-        legs.add (legsMesh_1);
-        legs.add (legsMesh_2);
-        legs.add (legsMesh_3);
-        legs.add (legsMesh_4);
-
-        parts.push (legs);
-
-        deskMesh.castShadow = true;
-        deskMesh.receiveShadow = true;
-        legsMesh_1.castShadow = true;
-        legsMesh_1.receiveShadow = true;
-        legsMesh_2.castShadow = true;
-        legsMesh_2.receiveShadow = true;
-        legsMesh_3.castShadow = true;
-        legsMesh_3.receiveShadow = true;
-        legsMesh_4.castShadow = true;
-        legsMesh_4.receiveShadow = true;
-
-        return parts;
+    // -------------------------------- 下方
+    function buildFloor() {
+        // Object (地板)
+        let floor = new THREE.Object3D();
+        // Geometry (Plane)
+        // PlaneBufferGeometry( 寬度x, 高度y, widthSegments, heightSegments )
+        let floorGeometry = new THREE.PlaneBufferGeometry( 300, 300, 1, 1 );
+        // Texture (來源: https://pixabay.com/zh/地板-家居-花纹-质地-624772/) (CC0)
+        // load a texture, set wrap mode to repeat
+        let texture = new THREE.TextureLoader().load( './Mesh/floor.png' );
+        texture.wrapS = THREE.RepeatWrapping;  // 允許 texture 水平 (x軸) 重複
+        texture.wrapT = THREE.RepeatWrapping;  // 允許 texture 垂直 (y軸) 重複
+        texture.repeat = new THREE.Vector2( 3, 3 );
+        // Material (Phong)
+        let floorMaterial = new THREE.MeshPhongMaterial({ map: texture });
+        // Mesh
+        let floorMesh = new THREE.Mesh( floorGeometry, floorMaterial );
+        floorMesh.rotation.x = - ( Math.PI / 2 );
+        floorMesh.receiveShadow = true;  // 定義物體接受其他物體的陰影投射
+        floorMesh.castShadow = true;  // 定義物體擋住光線以產生陰影
+        floor.add( floorMesh ); 
+        scene.add( floor );
     }
 
-    function buildDesk(){
-        
-        let parts = buildDeskParts();
-        let desk = new THREE.Object3D();
+    function buildWalls() {
+        // buildWallParts
+        let parts = [];
+        // Geometry (Plane)
+        let wallGeometry = new THREE.PlaneBufferGeometry( 300, 200, 1, 1 );
+        // Texture (來源: https://pixabay.com/zh/纹理-毛坯-罚款-石膏-墙-结构-表面-背景-旧漆-地区-1511759/) (CC0)
+        let texture = new THREE.TextureLoader().load( './Mesh/wall.png' );
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat = new THREE.Vector2( 3, 3 );
+        // Material (Phong)
+        let wallMaterial = new THREE.MeshPhongMaterial({ map: texture });
+        // Mesh (East) (Parts)
+        let wallMeshE = new THREE.Mesh( wallGeometry, wallMaterial );
+        wallMeshE.position.y = 100;
+        wallMeshE.position.x = -150;
+        wallMeshE.rotation.y = Math.PI / 2;
+        wallMeshE.receiveShadow = true;  // 定義物體接受其他物體的陰影投射
+        wallMeshE.castShadow = true;  // 定義物體擋住光線以產生陰影
+        parts.push( wallMeshE );
+        // Mesh (South) (Parts)
+        let wallMeshS = new THREE.Mesh( wallGeometry, wallMaterial );
+        wallMeshS.position.y = 100;
+        wallMeshS.position.z = -150;
+        wallMeshS.receiveShadow = true;  // 定義物體接受其他物體的陰影投射
+        wallMeshS.castShadow = true;  // 定義物體擋住光線以產生陰影
+        parts.push( wallMeshS );
+        // Mesh (West) (Parts)
+        let wallMeshW = new THREE.Mesh( wallGeometry, wallMaterial );
+        wallMeshW.position.y = 100;
+        wallMeshW.position.x = 150;
+        wallMeshW.rotation.y = - ( Math.PI / 2 );
+        wallMeshW.receiveShadow = true;  // 定義物體接受其他物體的陰影投射
+        wallMeshW.castShadow = true;  // 定義物體擋住光線以產生陰影
+        parts.push( wallMeshW );
+        // Mesh (North) (Parts)
+        let wallMeshN = new THREE.Mesh( wallGeometry, wallMaterial );
+        wallMeshN.position.y = 100;
+        wallMeshN.position.z = 150;
+        wallMeshN.rotation.y = Math.PI;
+        wallMeshN.receiveShadow = true;  // 定義物體接受其他物體的陰影投射
+        wallMeshN.castShadow = true;  // 定義物體擋住光線以產生陰影
+        parts.push( wallMeshN );
+        // buildWalls
+        // Object (牆壁)
+        let wall = new THREE.Object3D();
+        wall.add( parts[0] );
+        wall.add( parts[1] );
+        wall.add( parts[2] );
+        wall.add( parts[3] );
+        scene.add( wall );
+    }
 
-        // 桌子。
-        let deskPart = parts[0];
-        let legsPart = parts[1];
-        desk.add (deskPart);
-        desk.add (legsPart);
+    function buildCeiling() {
+        // Object (天花板)
+        let ceiling = new THREE.Object3D();
+        // Geometry (Plane)
+        let ceilingGeometry = new THREE.PlaneBufferGeometry( 300, 300, 1, 1 );
+        // Texture (來源: https://pixabay.com/zh/地板-家居-花纹-质地-624772/) (CC0)
+        let texture = new THREE.TextureLoader().load('./Mesh/wall.png');
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat = new THREE.Vector2( 3, 3 );
+        // Material (Phong)
+        let ceilingMaterial = new THREE.MeshPhongMaterial({ map: texture });  
+        // Mesh
+        let ceilingMesh = new THREE.Mesh( ceilingGeometry, ceilingMaterial );
+        ceilingMesh.rotation.x = Math.PI / 2;
+        ceilingMesh.position.y = 200;
+        ceilingMesh.receiveShadow = true;  // 定義物體接受其他物體的陰影投射
+        ceilingMesh.castShadow = true;  // 定義物體擋住光線以產生陰影
+        ceiling.add( ceilingMesh ); 
+        scene.add( ceiling );
+    }
 
-        return desk;
+    function buildTable() {
+        // buildTableParts
+        let parts = [];
+        // Material (Phong)
+    	let mat = new THREE.MeshPhongMaterial({ color: 0xFFFCEC });
+        // 桌面 (Parts)
+        // BoxBufferGeometry( 寬度x, 高度y, 深度z )
+        let topMesh = new THREE.Mesh( new THREE.BoxBufferGeometry( 40, 80, 2 ), mat );
+        topMesh.rotation.x = Math.PI / 2;
+        topMesh.position.y = 40;
+        topMesh.receiveShadow = true;  // 定義物體接受其他物體的陰影投射
+        topMesh.castShadow = true;  // 定義物體擋住光線以產生陰影
+        parts.push( topMesh );
+        // 桌腳 (Parts)
+        let legMesh = new THREE.Mesh( new THREE.BoxBufferGeometry( 5, 10, 40 ), mat );
+        legMesh.rotation.x = Math.PI / 2;
+        legMesh.position.y = 20;
+        legMesh.receiveShadow = true;  // 定義物體接受其他物體的陰影投射
+        legMesh.castShadow = true;  // 定義物體擋住光線以產生陰影
+        parts.push( legMesh );
+        // 桌底 (Parts)
+        let btmMesh = new THREE.Mesh( new THREE.BoxBufferGeometry( 25, 40, 1 ), mat );
+        btmMesh.rotation.x = Math.PI / 2;
+        btmMesh.position.y = 1;
+        btmMesh.receiveShadow = true;  // 定義物體接受其他物體的陰影投射
+        btmMesh.castShadow = true;  // 定義物體擋住光線以產生陰影
+        parts.push( btmMesh );
+        // buildTable
+        // Object (桌子)
+        let table = new THREE.Object3D();
+        table.add(parts[0]);  // top
+        table.add(parts[1]);  // leg
+        table.add(parts[2]);  // btm (bottom)
+        scene.add (table);
+    }
+
+    function buildChair() {
+        var onProgress = function( xhr ) {
+            if( xhr.lengthComputable ) {
+                var percentComplete = xhr.loaded / xhr.total * 100;
+                console.log( Math.round( percentComplete, 2 ) + '% downloaded' );
+            }
+        };
+        var onError = function( xhr ) {};
+        // mtl、obj    
+        var mtlLoader = new THREE.MTLLoader();
+        mtlLoader.setPath( './chair/' );
+        mtlLoader.load( 'WING.mtl', function( materials ) {
+            materials.preload();
+            var objLoader = new THREE.OBJLoader();
+            objLoader.setMaterials( materials );
+            objLoader.setPath( './chair/' );
+            objLoader.load( 'WING.obj', function( object ) {
+                var theObject = unitize( object, 40 );
+                theObject.rotation.x = - ( Math.PI / 2 );
+                theObject.rotation.z = - ( Math.PI / 2 );
+                theObject.position.x = 20;
+                theObject.position.y = 20;
+                // .obj model casting shadows
+                object.traverse( function( child ) {
+                    if( child instanceof THREE.Mesh ) {                            
+                        child.receiveShadow = true;  // 定義物體接受其他物體的陰影投射
+                        child.castShadow = true;  // 定義物體擋住光線以產生陰影
+                    }
+                });
+                scene.add (theObject);
+            }, onProgress, onError);
+        });
+    }
+
+    function buildlamp() {
+        var onProgress = function( xhr ) {
+            if( xhr.lengthComputable ) {
+                var percentComplete = xhr.loaded / xhr.total * 100;
+                console.log( Math.round( percentComplete, 2 ) + '% downloaded' );
+            }
+        };
+        var onError = function( xhr ) {};
+        // mtl、obj    
+        var mtlLoader = new THREE.MTLLoader();
+        mtlLoader.setPath( './lamp/' );
+        mtlLoader.load( 'lamp.mtl', function( materials ) {
+            materials.preload();
+            var objLoader = new THREE.OBJLoader();
+            objLoader.setMaterials( materials );
+            objLoader.setPath( './lamp/' );
+            objLoader.load( 'lamp.obj', function( object ) {
+                var theObject = unitize( object, 30 );
+                theObject.position.x = -6;
+                theObject.position.y = 41;
+                theObject.position.z = -26;
+                theObject.rotation.y = - ( Math.PI / 4 );
+                // .obj model casting shadows
+                object.traverse( function( child ) {
+                    if( child instanceof THREE.Mesh ) {                            
+                        child.receiveShadow = true;  // 定義物體接受其他物體的陰影投射
+                        child.castShadow = true;  // 定義物體擋住光線以產生陰影
+                    }
+                });
+                scene.add (theObject);
+            }, onProgress, onError);
+        });                
+        // 檯燈光源 (PointLight)
+        // SpotLight( 顏色, 強度, 距離, 角度, 半影, 衰減 )
+        // PointLight( 顏色, 強度, 距離, 衰減 )
+        let lampLight = new THREE.PointLight( 0xFFFFFF, 0.5 );
+        lampLight.position.set( -3, 66, -23 );
+        lampLight.castShadow = true;  // 定義物體擋住光線以產生陰影
+        lampLight.shadow.mapSize.width = 1024;  // 陰影映射寬度，數值越大，邊緣越光滑
+        lampLight.shadow.mapSize.height = 1024;  // 陰影映射高度，數值越大，邊緣越光滑
+        lampLight.shadow.camera.near = 10;  // 投影近點
+        scene.add(lampLight);
+        // 檯燈燈泡 (object)
+        let mat = new THREE.MeshBasicMaterial({ color: 0xFFFFFF, wireframe: true });
+        let lampObj = new THREE.Object3D();
+        let lampMesh = new THREE.Mesh( new THREE.SphereGeometry( 2, 32, 32 ), mat );
+        lampMesh.position.set( -3, 66, -23 );
+        lampObj.add( lampMesh );
+        scene.add(lampObj);
     }
 
     function buildControlParts() {
         var parts = [];
         
         //var mat = new THREE.MeshNormalMaterial()
-    	var mat = new THREE.MeshLambertMaterial({color:0xFFFFFF});
+    	var mat = new THREE.MeshLambertMaterial({color:0x272727});
+        var mat2 = new THREE.MeshLambertMaterial({color:0xFFFFFF});
 
         // 遙控器
         var control = new THREE.Object3D();
-        var controlMesh = new THREE.Mesh (new THREE.BoxGeometry (15, 10, 4),mat);  // 桌面
+        var controlMesh = new THREE.Mesh (new THREE.BoxGeometry (12, 5, 1),mat);  // 桌面
 
         controlMesh.rotation.x = Math.PI/2;
-        controlMesh.position.y = 43;
+        controlMesh.position.y = 41.5;
 
         control.add (controlMesh);
         parts.push (control);
 
         // 按鈕_1 (共 2 個)
         var btns_1 = new THREE.Object3D();
-        var btnsMesh_1 = new THREE.Mesh (new THREE.CylinderGeometry (2.5, 2.5, 2.5, 30), mat);  // 按鈕_1
+        var btnsMesh_1 = new THREE.Mesh (new THREE.CylinderGeometry (1, 1, 0.8, 30), mat2);  // 按鈕_1
 
         //btnsMesh.rotation.x = Math.PI/2;
-        btnsMesh_1.position.x = 4;
-        btnsMesh_1.position.y = 46.5;
+        btnsMesh_1.position.x = 0;
+        btnsMesh_1.position.y = 42.3;
         btnsMesh_1.position.z = 0;
 
         btns_1.add (btnsMesh_1);
@@ -152,11 +293,11 @@
 
         // 按鈕_2 (共 2 個)
         var btns_2 = new THREE.Object3D();
-        var btnsMesh_2 = new THREE.Mesh (new THREE.CylinderGeometry (2.5, 2.5, 2.5, 30), mat);  // 按鈕_2
+        var btnsMesh_2 = new THREE.Mesh (new THREE.CylinderGeometry (1, 1, 0.8, 30), mat2);  // 按鈕_2
 
         //btnsMesh.rotation.x = Math.PI/2;
-        btnsMesh_2.position.x = -4;
-        btnsMesh_2.position.y = 46.5;
+        btnsMesh_2.position.x = -3;
+        btnsMesh_2.position.y = 42.3;
         btnsMesh_2.position.z = 0;
 
         btns_2.add (btnsMesh_2);
@@ -180,86 +321,6 @@
         ctrl.add (btnsPart_2);
 
         return ctrl;
-    }
-
-    function buildChair() {
-        var onProgress = function (xhr) {
-            if (xhr.lengthComputable) {
-                var percentComplete = xhr.loaded / xhr.total * 100;
-                console.log(Math.round(percentComplete, 2) + '% downloaded');
-            }
-        };
-
-        var onError = function (xhr) { };
-            
-        var mtlLoader = new THREE.MTLLoader();
-        mtlLoader.setPath('./chair/');
-        mtlLoader.load('WING.mtl', function(materials) {
-            materials.preload();
-            var objLoader = new THREE.OBJLoader();
-            objLoader.setMaterials(materials);
-            objLoader.setPath('./chair/');
-            objLoader.load('WING.obj', function(object) {
-        
-                theObject =  unitize (object, 40);
-
-                theObject.rotation.x = - (Math.PI / 2);
-                theObject.rotation.z = - (Math.PI / 2);
-                theObject.position.x = 20;
-                theObject.position.y = 20;
-                scene.add (theObject);
-
-                // .obj model casting shadows
-                object.traverse(
-                    function (child) {
-                        if (child instanceof THREE.Mesh) {                            
-                            child.castShadow = true;
-                            child.receiveShadow = true;
-                        }
-                    });
-            }, onProgress, onError);
-        });
-
-    }
-
-    function buildlamp() {
-        var onProgress = function (xhr) {
-            if (xhr.lengthComputable) {
-                var percentComplete = xhr.loaded / xhr.total * 100;
-                console.log(Math.round(percentComplete, 2) + '% downloaded');
-            }
-        };
-
-        var onError = function (xhr) { };
-            
-        var mtlLoader = new THREE.MTLLoader();
-        mtlLoader.setPath('./lamp/');
-        mtlLoader.load('Desk lamp.mtl', function(materials) {
-            materials.preload();
-            var objLoader = new THREE.OBJLoader();
-            objLoader.setMaterials(materials);
-            objLoader.setPath('./lamp/');
-            objLoader.load('Desk lamp.obj', function(object) {
-        
-                theObject =  unitize (object, 30);
-
-                theObject.position.x = -10;
-                theObject.position.y = 41;
-                theObject.position.z = 20;
-                theObject.rotation.y = 0.8;
-                scene.add (theObject);
-
-            }, onProgress, onError);
-        });
-
-        // 檯燈光緣 (spotLight)
-        let lampLight = new THREE.SpotLight(0xFFF8D7, 1);
-        lampLight.position.set( -7.5, 66, 17 );
-        lampLight.castShadow = true;
-        lampLight.shadow.mapSize.width = 1024;
-        lampLight.shadow.mapSize.height = 1024;
-        scene.add(lampLight);
-
     }
 
     // 吊燈 (來源: https://poly.google.com/view/e1pZXTJs3Qk) (作者: Caitlyn Meeks-Ferragallo) (CC-BY)
@@ -290,8 +351,15 @@
             }, onProgress, onError);
         });
 
-        // 吊燈光緣 (spotLight)
-        let chandelierLight = new THREE.SpotLight(0xFFF8D7, 1);
+        var mat = new THREE.MeshBasicMaterial({color:0xFFFFFF, wireframe: true});
+        let sObj = new THREE.Object3D();
+        let s = new THREE.Mesh (new THREE.SphereGeometry( 2, 32, 32 ),mat);
+        s.position.set (0, 120, 0);
+        sObj.add (s);
+        scene.add(sObj);
+
+        // 吊燈光緣 (PointLight)
+        let chandelierLight = new THREE.PointLight(0xFFF8D7, 1, 0);
         chandelierLight.position.set( 0, 120, 0 );
         chandelierLight.castShadow = true;
         chandelierLight.shadow.mapSize.width = 1024;
@@ -321,54 +389,20 @@
         return theObject;
     }
 
-    function buildlamplight(){
-        var mat = new THREE.MeshBasicMaterial({color:0xFFFFFF, wireframe: true});
-        let sunObj = new THREE.Object3D();
-        sun = new THREE.Mesh (new THREE.SphereGeometry( 2, 32, 32 ),mat);
-        sun.position.set (-7.5, 66, 17);
-        sunObj.add (sun);
-        return sunObj;
-    }
-
-    function buildFloor() {
-        // 物件 (地板)
-        let floor = new THREE.Object3D();
-        // 幾何 (平面)
-        let floorGeometry = new THREE.PlaneGeometry( 300, 300, 1, 1 );
-        // 材質 (貼圖) (來源: https://pixabay.com/zh/地板-家居-花纹-质地-624772/) (CC0)
-        let texture = new THREE.TextureLoader().load('./Mesh/floor.png');
-        texture.wrapS = THREE.RepeatWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat = new THREE.Vector2(3, 3);
-        // 材質 (Phong)
-        let floorMaterial = new THREE.MeshPhongMaterial({ 
-            map: texture, 
-            side: THREE.DoubleSide
-        });
-       
-        // 物件
-        let floorMesh = new THREE.Mesh( floorGeometry, floorMaterial );
-        floorMesh.rotation.x = Math.PI / -2;
-        floorMesh.position.y = 0;
-        // 定義哪個物體接受陰影。
-        floorMesh.receiveShadow = true;
-        floor.add(floorMesh); 
-        scene.add(floor);
-    }
-
     function init() {
         renderer = new THREE.WebGLRenderer({
             antialias: true
         });
-        renderer.setSize(window.innerWidth, window.innerHeight - 10);
+
+        renderer.setSize(window.innerWidth, window.innerHeight - 100);
         renderer.setClearColor(0x84C1FF);  // 設定背景顏色
         camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
         camera.position.z = 250;  // important
         camera.position.y = 150;
-        //camera.position.x = 35;
         controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableKeys = false;
         document.body.appendChild(renderer.domElement);
+
         clock = new THREE.Clock();
         scene = new THREE.Scene();  // 建立場景
       
@@ -377,22 +411,21 @@
         let gridXZ = new THREE.GridHelper(1000, 10, 'red', 'white');
         
         scene.add(gridXZ);
-        let lamplight = buildlamplight();
+
         let ctrl = buildControl();
 
-        //ctrl.position.y = 10;
-        //ctrl.position.z = 10;
-
-        buildFloor();
-        buildChair();
+        buildFloor();  // 地板
+        buildWalls();  // 牆壁
+        buildCeiling();  // 天花板
+        buildTable();  // 桌子
+        buildChair();  // 椅子
         buildChandelier();
 
         buildlamp();
         
-        let desk = buildDesk();
-        scene.add (desk);
+        
         scene.add (ctrl);
-        scene.add (lamplight);
+
 
         // 添加光源
         //scene.add(new THREE.AmbientLight(0x444444));  // 環境光
@@ -401,29 +434,14 @@
         renderer.shadowMap.enabled = true;
 
         //
-        renderer.shadowMap.type = THREE.BasicShadowMap;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     }
     
-    function update(dt) {
-        keyboard.update();
-        if ( keyboard.pressed("left") ) 
-            angle += 0.01;               
-        if ( keyboard.pressed("right") )
-            angle -= 0.01;               
-        if ( keyboard.pressed("up") )  
-            speed += 0.5;        
-        if ( keyboard.pressed("down") )  
-            speed -= 0.5;    
-        speed = Math.clamp (speed, 0.1, 20.0);		
-        vel = new THREE.Vector3(speed,0,0);
-            
-        vel.applyAxisAngle (new THREE.Vector3(0,1,0), angle);
-        pos.add (vel.clone().multiplyScalar(dt)); 	
-    }
+
     function animate() {
         controls.update();
         var dt = clock.getDelta();
-        update(dt);
+        
        
         renderer.render (scene, camera);
         requestAnimationFrame (animate);
