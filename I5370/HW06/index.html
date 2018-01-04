@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<style>
+#info {
+  position: absolute;
+  top: 2%;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: #ffff00
+}
+
+body {
+  overflow: hidden;
+}
+</style>
+</head>
+
+<body> 
+<div id="info">HW6<br>
+  
+  <select id='coords'>
+  <option value="obj" selected>Object Coordinate</option>
+  <option value="world">World Coordinate</option>
+  </select>
+  
+  <select id='shading'>
+  <option value='perVertex' selected> Per Vertex</option>
+  <option value='perPixel'> Per Pixel </option>
+  </select>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<script id="myVertexShader" type="x-shader/x-vertex">
+  uniform int shading;
+  uniform int coordinate;
+  varying vec3 color;
+  uniform vec3 lightpos;  // world coordinate
+  varying vec3 eyelightdir;
+  varying vec3 eyenormal;
+  
+  varying vec4 eyepos;
+	
+  void perVertexShading(vec3 objpos, vec3 worldpos) {
+    if (coordinate == 0) {
+  	  if (objpos.x > 0.0) 
+    	color = vec3 (1,1,1);
+      else
+    	color = vec3 (0,0,0);
+    } else if (coordinate == 1) {
+  	  if (worldpos.x > 0.0) 
+    	color = vec3 (1,1,1);
+      else
+    	color = vec3 (0,0,0);    	
+    }
+  }
+
+  // your homework
+  void perPixelShading() {
+   
+  }
+  
+  void main() {
+	gl_Position = projectionMatrix* modelViewMatrix * vec4( position, 1.0);
+    vec4 worldpos = modelMatrix * vec4 (position, 1.0);
+     
+  	if (shading == 0)  // per-vertex shading
+    	perVertexShading(position, worldpos.xyz);
+    else
+		perPixelShading();
+
+    eyepos = modelViewMatrix * vec4 (position, 1.0);
+    vec4 eyelightpos= viewMatrix * vec4 (lightpos, 1.0);
+    eyelightdir = normalize (eyelightpos.xyz - eyepos.xyz);
+    eyenormal = normalMatrix * normal;
+  }
+</script>
+
+<script id="myFragmentShader" type="x-shader/x-fragment">
+  varying vec3 color;
+  varying vec3 eyelightdir;
+  varying vec3 eyenormal;
+  varying vec4 eyepos;
+  uniform float opacity;
+	void main() {
+		gl_FragColor = vec4 (color, 1.0);
+		float intensity = dot (normalize (eyenormal), normalize (eyelightdir));    
+        vec3 diffuse = intensity*vec3 (1,1,1);
+    
+        vec3 h = normalize(-normalize (eyepos.xyz) + normalize (eyelightdir));
+        float shininess = 40.;    
+        vec3 specular = pow (dot (eyenormal, h), shininess) *vec3 (1,0,0);
+        gl_FragColor = vec4(diffuse + specular, opacity);
+	}
+</script>
+
+<script>
+
+$('#coords').change( function() {
+	console.log ( $(this).val() );
+	let objType = $(this).val();
+	if (objType === 'obj') {
+		teapotMaterial.uniforms.coordinate.value = 0;
+	} else if (objType === 'world') {
+		teapotMaterial.uniforms.coordinate.value = 1;
+	}
+});
+
+
+var scene, renderer, camera;
+var mesh;
+var controls;
+var pointLight, lightSphere;
+var meshMaterial;
+var angle = 0;
+var movingTeapot;
+var angle = 0;
+var teapotMaterial;
+
+
+init();
+animate();
+
+function init() {
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+
+  renderer = new THREE.WebGLRenderer({
+    antialias: true
+  });
+  renderer.setSize(width, height);
+  renderer.setClearColor(0x888888);
+  document.body.appendChild(renderer.domElement);
+
+  scene = new THREE.Scene();
+
+  camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 10000);
+  camera.position.set (0, 160, 400);
+  //camera.position.z = 200;
+  camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+  var gridXZ = new THREE.GridHelper(200, 20, 'red', 'white');
+  scene.add(gridXZ);
+
+  pointLight = new THREE.PointLight(0xffffff);
+  //pointLight.position.set(200, 300, 200);
+  scene.add(pointLight);
+  lightSphere = new THREE.Mesh(new THREE.SphereGeometry(5),
+  new THREE.MeshBasicMaterial({
+      color: 0xffff00,
+      wireframe: true
+  }));
+  scene.add(lightSphere);
+  var ambientLight = new THREE.AmbientLight(0x111111);
+  scene.add(ambientLight);
+
+  /////////////////////////////////////////////////////////////////
+  teapotMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+	  lightpos: {type:'v3', value: new THREE.Vector3(0, 30, 20) },
+      opacity: {type: 'f', value: 1.0},
+	  shading: {type:'i', value: 0},
+      coordinate: {type:'i', value: 0}
+    },
+	vertexShader: document.getElementById('myVertexShader').textContent,
+	fragmentShader: document.getElementById('myFragmentShader').textContent
+  });
+		
+  // important!!
+  teapotMaterial.transparent = true;
+    
+	/*
+  var geometry = new THREE.TorusKnotGeometry(20, 5, 100, 16);
+  mesh = new THREE.Mesh(geometry, teapotMaterial);
+  scene.add(mesh);
+  */
+
+  ////////////////////////////////////////////////////////////////
+
+/*
+  teapotMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      lightpos: {type:'v3', value: new THREE.Vector3(0, 30, 20) },
+	  shading: {type:'i', value: 0},
+      coordinate: {type:'i', value: 0},
+	},
+    vertexShader: document.getElementById('myVertexShader').textContent,
+    fragmentShader: document.getElementById('myFragmentShader').textContent
+  });
+  */
+
+  var jsonLoader = new THREE.JSONLoader();
+  
+  //var url = "teapot.json";
+  var url = 'https://raw.githubusercontent.com/jyunming-chen/tutsplus/master/models/teapot.json';
+  jsonLoader.load(url, function(geometry, materials) {
+    //var material = new THREE.MeshFaceMaterial(materials);
+    jsonModel = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial());
+    
+    let theTeapot = unitize (jsonModel, 50);
+    scene.add(theTeapot);
+
+   jsonModel = new THREE.Mesh(geometry, teapotMaterial);
+     movingTeapot = unitize (jsonModel, 50);
+    
+    movingTeapot.position.set(70, 0, 0);
+    scene.add(movingTeapot);
+
+  });
+  
+}
+
+////////////////////////////////////////
+// create an Object3D of the given object
+// so that it is centered at +Y axis
+// 
+function unitize (object, targetSize) {  
+	
+	// find bounding box of 'object'
+	var box3 = new THREE.Box3();
+	box3.setFromObject (object);
+	var size = new THREE.Vector3();
+	size.subVectors (box3.max, box3.min);
+	var center = new THREE.Vector3();
+	center.addVectors(box3.max, box3.min).multiplyScalar (0.5);
+	
+	console.log ('center: ' + center.x + ', '+center.y + ', '+center.z );
+	console.log ('size: ' + size.x + ', ' +  size.y + ', '+size.z );
+	
+	// uniform scaling according to objSize
+	var objSize = findMax (size);
+	var scaleSet = targetSize/objSize;
+				
+	var theObject =  new THREE.Object3D();
+	theObject.add (object);
+	object.scale.set (scaleSet, scaleSet, scaleSet);
+	object.position.set (-center.x*scaleSet, -center.y*scaleSet + size.y/2*scaleSet, -center.z*scaleSet);
+	
+	return theObject;
+	
+	
+	// helper function
+	function findMax(v) {
+		if (v.x > v.y) {
+			return v.x > v.z ? v.x : v.z;
+		} else { // v.y > v.x
+			return v.y > v.z ? v.y : v.z;
+		} 
+	}
+			
+}
+
+function animate() {
+  angle += 0.01;
+
+  pointLight.position.set(50 * Math.cos(angle), 80, 50 * Math.sin(angle));
+    
+  lightSphere.position.copy(pointLight.position);
+  teapotMaterial.uniforms.lightpos.value.copy (pointLight.position);
+  teapotMaterial.uniforms.opacity.value = Math.abs(Math.sin (angle)); 
+  // update the uniform variable
+  
+  if (movingTeapot !== undefined) {
+	movingTeapot.position.set (70*Math.cos(angle), 0, 70*Math.sin(angle));
+  }
+  
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+
+}
+
+</script>
+</body>
+
+</html>
