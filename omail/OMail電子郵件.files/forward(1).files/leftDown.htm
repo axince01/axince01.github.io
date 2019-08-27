@@ -1,0 +1,151 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0035)http://mail.klcg.gov.tw/leftDown.do -->
+<HTML><HEAD><META content="IE=5.0000" http-equiv="X-UA-Compatible">
+<TITLE>leftDown</TITLE>
+<STYLE type=text/css>TD {
+	FONT-SIZE: 10pt; COLOR: #00008c
+}
+A {
+	FONT-SIZE: 10pt; TEXT-DECORATION: none; COLOR: #00008c
+}
+A:hover {
+	TEXT-DECORATION: underline; COLOR: #00008c
+}
+A:visited {
+	FONT-SIZE: 10pt; TEXT-DECORATION: none; COLOR: #00008c
+}
+</STYLE>
+
+<META content="text/html; charset=utf-8" http-equiv=Content-Type>
+<SCRIPT language=JAVASCRIPT src="leftDown.files/webmail.js"></SCRIPT>
+
+<SCRIPT language=JavaScript1.2>
+var openNewWindow=false;
+function sendMail(to,mobile){
+	if(top.rightFrame.smsMain){
+		if(mobile==''){
+			alert("該使用者並未有手機號碼。");
+		}else{
+			mobileObj=top.rightFrame.document.smsMain.smsMainForm.mobile;
+			mobileStr=mobileObj.value;
+			len=mobileStr.length;
+			if(mobileStr.indexOf(mobile)==-1){
+		  		if(len!=0 && mobileStr.charAt(len-1)!=';')
+		  			mobileObj.value+=";"+mobile;
+		  		else
+		  			mobileObj.value+=mobile;
+		  	}else{
+		  		alert("門號已存在,請重新選擇。");
+		  	}
+		 }
+	}else{
+		if(openNewWindow){ 
+			sendFrameWnd=top.webmailTop1.sendFrameObject;
+		 	if(!sendFrameWnd || sendFrameWnd.closed){
+				sendFrameWnd=OpenWnd('','sendFrame',600,450,160,18,1);
+		   		sendFrameWnd.focus();
+		   		top.webmailTop1.sendFrameObject=sendFrameWnd;
+				thisform.action="sendFrame.do?act=0";
+				thisform.method="post";
+				thisform.target="sendFrame";
+			   thisform.to.value=to;
+			   thisform.submit();
+		 	}else{
+		   		sendFrameWnd.focus();
+		  		sendMain=sendFrameWnd.sendMain;
+		  		sendTo=eval("sendMain.sendMainForm."+sendMain.recipient);
+		  		//sendTo=sendFrameWnd.sendMain.sendMainForm.to;
+		  		toStr=sendTo.value;
+		  		len=toStr.length;
+		  		if(toStr.indexOf(to)==-1){
+			  		if(len!=0 && toStr.charAt(len-1)!=';')
+			  			sendTo.value+=";"+to;
+			  		else
+			  			sendTo.value+=to;
+		  		}
+		   }
+		}else{
+		  if(top.rightFrame.sendMain){
+		  		sendMain=top.rightFrame.sendMain;
+		  		sendTo=eval("sendMain.document.sendMainForm."+sendMain.recipient);
+		  		toStr=sendTo.value;
+		  		len=toStr.length;
+		  		if(toStr.indexOf(to)==-1){
+			  		if(len!=0 && toStr.charAt(len-1)!=';')
+			  			sendTo.value+=";"+to;
+			  		else
+			  			sendTo.value+=to;
+		  		}
+		  }else{
+		//alert(6);
+			//alert(encodeURIComponent(to));
+				//var sendMain=window.open("sendFrame.do?act=0&to="+encodeURIComponent(to),"rightFrame",'');
+/*				alert(sendMain);
+				alert(sendMain.recipient);
+				var recipient='to'
+				if(sendMain.recipient)
+					recipient=sendMain.recipient;
+		  		sendTo=eval("sendMain.document.sendMainForm."+recipient);
+		  		alert(sendMain);
+		  		alert(sendTo);
+		  		toStr=sendTo.value;
+		  		len=toStr.length;
+		  		if(toStr.indexOf(to)==-1){
+			  		if(len!=0 && toStr.charAt(len-1)!=';')
+			  			sendTo.value+=";"+to;
+			  		else
+			  			sendTo.value+=to;
+		  		}*/
+
+
+			  thisform.action="sendFrame.do?act=0";
+			  thisform.method="POST";
+			  thisform.target="rightFrame";
+			  thisform.to.value=to;
+			  thisform.submit();
+		  }
+		}
+	}
+}
+function getGroupList(groupId){
+	if(top.rightFrame.document.sendMain)
+		window.document.groupForm.sendTo.value=top.rightFrame.document.sendMain.sendMainForm.to.value;
+
+	window.document.groupForm.groupId.value=groupId;
+	window.document.groupForm.submit();
+
+}
+
+</SCRIPT>
+
+<META name=GENERATOR content="MSHTML 11.00.9600.19326"></HEAD>
+<BODY leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
+<FORM name=leftDownForm><INPUT type=hidden name=to> 
+<TABLE class=eip9pt borderColor=#ffffff cellSpacing=1 cellPadding=0 width=133 
+border=0>
+  <TBODY>
+  <TR height=18>
+    <TD background=leftDown.files/contacts0.gif width=130 noWrap 
+      align=left><IMG src="leftDown.files/org.gif"> &nbsp;&nbsp;<FONT 
+      color=#000000>聯絡人</FONT>&nbsp;/&nbsp;<A id=組織 
+      href="http://mail.klcg.gov.tw/browseFlat.do?forwardTo=mail/browseFlat1">組織</A> 
+    </TD></TR>
+  <TR>
+    <TD height=5></TD></TR></TBODY></TABLE>
+<TABLE cellSpacing=1 cellPadding=0 width=133 border=0>
+  <TBODY>
+  <TR>
+    <TD noWrap><IMG border=0 src="leftDown.files/user.gif">&nbsp;&nbsp;<A 
+      href="javascript:sendMail('123<123@mail.gov.tw>','');">123</A></TD></TR>
+  <TR>
+    <TD noWrap><IMG border=0 src="leftDown.files/user.gif">&nbsp;&nbsp;<A 
+      href="javascript:sendMail('456<456@gmail.com>','');">456</A></TD></TR>
+  <TR>
+    <TD noWrap><IMG border=0 src="leftDown.files/user.gif">&nbsp;&nbsp;<A 
+      href="javascript:sendMail('hgiga<hgiga@hgiga.com>','');">hgiga</A></TD></TR></TBODY></TABLE></FORM>
+<FORM method=post name=groupForm action=groupList.do target=hiddenFrame><INPUT 
+type=hidden name=sendTo> <INPUT type=hidden name=groupId> </FORM>
+<SCRIPT>
+	thisform=document.leftDownForm
+</SCRIPT>
+</BODY></HTML>
