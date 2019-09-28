@@ -1,0 +1,59 @@
+/*****************************************************************************
+ *
+ * Copyright 2019 ifunfarm
+ * Last Edit: 2019.09.29.
+ *
+ ****************************************************************************/
+
+@import url('https://fonts.googleapis.com/earlyaccess/notosanstc.css');
+@import url('https://fonts.googleapis.com/css?family=Ubuntu:300,400');
+
+/* vw (view width):  可視範圍寬度的百分比 */
+/* vh (view height): 可視範圍高度的百分比 */
+
+* {
+	box-sizing: border-box;
+}
+  
+html, body {
+	padding: 0;
+	margin: 0;
+	height: 100%;
+	width: 100%;
+	font-family: 'Noto Sans TC', sans-serif;
+	font-weight: 300;
+	background: rgb(235, 240, 240);
+	color: rgb(85, 90, 105);
+}
+
+.header {
+	position: fixed;
+	width: 100%;
+	height: 56px;  /* 56px 並無可靠計算 */
+	background: rgb(255, 255, 255);
+	border-bottom: 1px solid rgb(230, 230, 230);
+	color: rgb(10, 175, 180);
+	text-align: center;
+	z-index: 1000; 
+}
+
+.header_title {
+	margin: 0;
+	padding-top: 16px;
+  	font-weight: 500;
+	font-size: 18px;
+	letter-spacing: 0.5px;
+}
+
+.main {
+	padding-top: 56px;
+	width: 1028px;
+	margin: 0px auto;
+}
+
+img {
+	border: 0;
+	height: 288px;
+	width: 512px;
+	padding: 16px;
+}
