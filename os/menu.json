@@ -1,0 +1,40 @@
+﻿{
+  "menu": [
+    {
+      "Name": "首頁",
+      "Url": "index.html",
+      "sub": null
+    },
+    {
+      "Name": "快活食譜",
+      "Url": "Recipe.html",
+      "sub": null
+    },
+    {
+      "Name": "關於我們",
+      "Url": "About.html",
+      "sub": [
+        {
+          "Name": "問題建議與合作提案",
+          "Url": "About.html#divSuggest",
+          "sub": null
+        },
+        {
+          "Name": "會員條款",
+          "Url": "Terms.html",
+          "sub": null
+        },
+        {
+          "Name": "隱私權政策",
+          "Url": "privacypolicy.html",
+          "sub": null
+        }
+      ]
+    },
+    {
+      "Name": "常見問題",
+      "Url": "faq.html",
+      "sub": null
+    }
+  ]
+}
