@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300&display=swap');
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 36px;
+    font-family: 'Noto Sans TC', sans-serif;
+    /* background: #000000; */
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    padding: 72px;
+}
+
+.headerLeft {
+    align-self: flex-end;
+}
+
+.headerLeft a {
+    display: block;
+    background-image: url("../img/logo.svg");
+    background-repeat: no-repeat;
+    background-size: 130px 73px;
+    width: 130px;
+    height: 73px;
+}
+
+.headerMiddle {
+    width: calc(100vw - 650px);
+    border: 1px #DFE1E5 solid;
+    border-radius: 36px;
+}
+
+.headerMiddle input {
+    width: calc(100vw - 722px);
+    border: none;
+    border-radius: 36px;
+    background: none;
+    font-size: 36px;
+    padding: 8.75px 36px;
+    outline: none;
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
+.headerRight {
+    display: flex;
+}
+
+#signIn {
+    display: block;
+    background-image: url("../img/signIn.svg");
+    background-repeat: no-repeat;
+    background-size: 32px 32px;
+    width: 32px;
+    height: 32px;
+    margin: 20.5px 0px;
+}
+
+#setting {
+    display: block;
+    background-image: url("../img/setting.svg");
+    background-repeat: no-repeat;
+    background-size: 32px 32px;
+    width: 32px;
+    height: 32px;
+    margin: 20.5px 36px;
+}
+
+#nowTime {
+    padding: 8px 0;
+    color: #646464;
+}
+
+.block {
+    display: flex;
+    /* justify-content: space-between; */
+    height: 300px;
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 97.25px 101px;
+}
+
+.item_icon {
+    display: block;
+    background-image: url("../img/apps.svg");
+    background-repeat: no-repeat;
+    background-size: 72px 72px;
+    width: 72px;
+    height: 72px;
+}
+
+.item_text {
+    padding-top: 10px;
+    /* 需要調整 有切到上面圖標 */
+    font-size: 16px;
+    font-weight: bold;
+    color: #646464;
+}
+
+.apps {
+    display: flex;
+    width: calc(100vw - 346px);
+    height: 300px;
+    margin-right: 72px;
+}
+
+.app {
+    display: flex;
+    justify-content: space-between;
+    width: 192px;
+    height: 108px;
+    border-radius: 16px;
+    margin: 96px 12px;
+    text-decoration: none;
+}
+
+.app_icon {
+    display: block;
+    background-repeat: no-repeat;
+    background-size: 64px 64px;
+    width: 64px;
+    height: 64px;
+    margin: 22px 0 22px 16px;
+}
+
+.app_text {
+    display: flex;
+    color: #FFFFFF;
+    margin: 24px 16px 24px 0;
+}
+
+#app_games {
+    background: -webkit-linear-gradient(left top, #a6e7ff, #497080);
+    background: -o-linear-gradient(bottom right, #a6e7ff, #497080);
+    background: -moz-linear-gradient(bottom right, #a6e7ff, #497080);
+    background: linear-gradient(to bottom right, #a6e7ff, #497080);
+}
+
+#games_icon {
+    background-image: url("../img/games.svg");
+}
+
+#app_videos {
+    background: -webkit-linear-gradient(left top, yellow, red);
+    background: -o-linear-gradient(bottom right, yellow, red);
+    background: -moz-linear-gradient(bottom right, yellow, red);
+    background: linear-gradient(to bottom right, yellow, red);
+}
+
+#videos_icon {
+    background-image: url("../img/videos.svg");
+}

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LYHOYA</title>
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="headerLeft">
+            <a href="./"></a>
+        </div>
+        <div class="headerMiddle">
+            <input type="text" placeholder="搜尋">
+        </div>
+        <div class="headerRight">
+            <a id="signIn" href="./signIn"></a>
+            <a id="setting" href="./setting"></a>
+            <time id="nowTime"></time>
+        </div>
+    </header>
+
+    <div class="main">
+        <div class="block">
+            <div class="item" id="item_apps">
+                <div class="item_icon" id="item_icon_apps"></div>
+                <div class="item_text">應&nbsp;用&nbsp;程&nbsp;式</div>
+            </div>
+            <div class="apps">
+                <a class="app" id="app_games" href="./games">
+                    <div class="app_icon" id="games_icon"></div>
+                    <div class="app_text" id="games_text">遊&nbsp;戲</div>
+                </a>
+                <a class="app" id="app_videos" href="./videos">
+                    <div class="app_icon" id="videos_icon"></div>
+                    <div class="app_text" id="videos_text">影&nbsp;視</div>
+                </a>
+                <a class="app" id="app_weather" href="./weather">
+                    <div class="app_icon" id="weather_icon"></div>
+                    <div class="app_text" id="weather_text">天&nbsp;氣</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script language="JavaScript">
+        function paddingLeft(str, lenght) {
+            if (str.length >= lenght)
+                return str;
+            else
+                return paddingLeft("0" + str, lenght);
+        }
+
+        function ShowTime() {　
+            var date = new Date();
+            var hour = date.getHours();　
+            var min = date.getMinutes();
+            document.getElementById('nowTime').innerHTML = paddingLeft(String(hour), 2) + ' : ' + paddingLeft(String(min), 2);　
+            setTimeout('ShowTime()', 1000);
+        }
+    </script>
+
+    <body onload="ShowTime()">
+
+    </body>
+
+</html>
